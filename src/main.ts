@@ -9,6 +9,7 @@ import { QuestionDeck, type AskedQuestion, type Question, type QuestionBank } fr
 import { randomSeed, seedFromString } from './core/randomizer';
 import { detectLanguage, formatNumber, lang, LANGUAGES, setLanguage, t, translateDom } from './i18n';
 import { Controls } from './input/keyboard';
+import { TouchControls, type Release } from './input/touch';
 import { Background } from './render/background';
 import { Effects } from './render/effects';
 import { Renderer } from './render/renderer';
@@ -31,6 +32,21 @@ const controls = new Controls(() => settings.keys, {
   toggleSfx: () => setSfx(!settings.sfx),
   blocked: () => !$('scores').hidden || !$('settings').hidden,
 });
+const touch = new TouchControls($('game'), () => renderer.cell, onTouchRelease);
+
+function onTouchRelease(r: Release) {
+  const g = game;
+  if (!g) return;
+  if (r === 'rotate-cw') g.rotate(1);
+  else if (r === 'rotate-ccw') g.rotate(-1);
+  else if (r === 'harddrop') g.hardDrop();
+  else if (r === 'hold') g.holdPiece();
+}
+
+/** Short vibration for touch players (Android; iOS ignores it). */
+function haptic(ms: number) {
+  if (touch.active) navigator.vibrate?.(ms);
+}
 
 let game: Game | null = null;
 let deck: QuestionDeck | null = null;
@@ -166,6 +182,7 @@ function setSfx(on: boolean) {
 function syncChips() {
   $('chip-music').classList.toggle('off', !settings.music);
   $('chip-sfx').classList.toggle('off', !settings.sfx);
+  $('chip-pause').setAttribute('aria-label', t('paused'));
   $<HTMLInputElement>('set-music').checked = settings.music;
   $<HTMLInputElement>('set-sfx').checked = settings.sfx;
 }
@@ -182,6 +199,7 @@ async function startGame(useChallenge = true) {
   game = new Game({ seed: seedFromString(seed), nextQuestion: () => d.next() });
   controls.game = game;
   controls.releaseAll();
+  touch.game = game;
   fx.particles = [];
   fx.texts = [];
   bg.setLevel(1);
@@ -215,6 +233,7 @@ function quitToMenu() {
   audio.stopMusic();
   game = null;
   controls.game = null;
+  touch.game = null;
   renderChallenge();
   show('menu');
 }
@@ -261,6 +280,10 @@ function endGame(g: Game) {
 const quizEl = $('quiz');
 const optButtons = [...quizEl.querySelectorAll<HTMLButtonElement>('.opt')];
 
+/** Taps this soon after a question appears were aimed at the board, not at an answer. */
+const TAP_GRACE_MS = 250;
+let quizShownAt = 0;
+
 function showQuiz(asked: AskedQuestion, total: number) {
   $('quiz-q').textContent = asked.question.q;
   optButtons.forEach((b, i) => {
@@ -268,6 +291,7 @@ function showQuiz(asked: AskedQuestion, total: number) {
     b.querySelector('span')!.textContent = asked.question.a[asked.options[i]];
   });
   quizEl.hidden = false;
+  quizShownAt = performance.now();
   lastTick = total;
 }
 
@@ -292,7 +316,7 @@ function showAnswer(e: Extract<GameEvent, { type: 'answer' }>) {
 
 optButtons.forEach((b) =>
   b.addEventListener('click', () => {
-    if (game?.phase === 'quiz') game.answer(Number(b.dataset.i));
+    if (game?.phase === 'quiz' && performance.now() - quizShownAt > TAP_GRACE_MS) game.answer(Number(b.dataset.i));
   }),
 );
 
@@ -313,6 +337,7 @@ function handleEvent(g: Game, e: GameEvent, now: number) {
       audio.play('harddrop');
       fx.shake(Math.min(10, 3 + e.distance * 0.4));
       fx.dropTrail(e.cells, e.color, HIDDEN_ROWS, e.distance);
+      haptic(12);
       break;
     case 'quiz':
       audio.play('quiz');
@@ -325,6 +350,7 @@ function handleEvent(g: Game, e: GameEvent, now: number) {
       renderer.markResolve(now);
       showAnswer(e);
       if (!e.correct) fx.shake(6, 220);
+      haptic(e.correct ? 15 : 60);
       break;
     case 'clear':
       fx.rowBurst(e.rows, e.cells, HIDDEN_ROWS);
@@ -432,6 +458,10 @@ function init() {
     renderSettings();
     openModal('settings');
   });
+  $('chip-pause').addEventListener('click', (e) => {
+    togglePause();
+    (e.currentTarget as HTMLElement).blur();
+  });
   $('chip-music').addEventListener('click', (e) => {
     setMusic(!settings.music);
     (e.currentTarget as HTMLElement).blur();
@@ -475,6 +505,10 @@ function init() {
       case 'close':
         show(modalReturn);
         break;
+      case 'settings':
+        renderSettings();
+        openModal('settings');
+        break;
       case 'reset-keys':
         settings.keys = structuredClone(DEFAULT_KEYS);
         saveSettings(settings);
@@ -497,7 +531,10 @@ function init() {
       show(modalReturn);
     }
   });
-  window.addEventListener('pointerdown', () => audio.unlock(), { once: true });
+  // iOS only unlocks audio inside touchend/click handlers, so listen to both until it works.
+  for (const type of ['pointerdown', 'touchend', 'click'] as const) {
+    window.addEventListener(type, () => audio.unlock(), { passive: true });
+  }
 
   window.addEventListener('resize', () => {
     renderer.resize();

@@ -61,6 +61,8 @@ export class Game {
   pendingRows: number[] = [];
   quiz: QuizState | null = null;
   softDropping = false;
+  /** Increments for every spawned piece, so input can tell when "its" piece is gone. */
+  pieceCount = 0;
   events: GameEvent[] = [];
 
   private bag: Bag;
@@ -124,6 +126,18 @@ export class Game {
       }
     }
     return false;
+  }
+
+  /** Move down one row immediately (touch soft drop follows the finger row by row). */
+  softDropStep(): boolean {
+    if (this.phase !== 'playing') return false;
+    const next = { ...this.active, y: this.active.y + 1 };
+    if (!this.fitsAt(next)) return false;
+    this.active = next;
+    this.score += 1;
+    this.gravityAcc = 0;
+    this.trackLowest();
+    return true;
   }
 
   hardDrop() {
@@ -314,6 +328,7 @@ export class Game {
 
   private spawn(type: PieceType) {
     this.active = spawnPiece(type);
+    this.pieceCount++;
     this.canHold = true;
     this.gravityAcc = 0;
     this.lockTimer = 0;

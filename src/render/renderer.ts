@@ -17,6 +17,7 @@ function setupCanvas(c: HTMLCanvasElement, w: number, h: number, dpr: number) {
 export class Renderer {
   cell = 32;
   private nextCount = 5;
+  private nextHorizontal = false;
   private dpr = Math.min(window.devicePixelRatio || 1, 2);
   private sprites = new BlockSprites(this.dpr);
   private ctx!: CanvasRenderingContext2D;
@@ -33,17 +34,20 @@ export class Renderer {
   }
 
   resize() {
-    const narrow = window.innerWidth < 640;
-    const side = narrow ? 170 : 380;
-    const byH = (window.innerHeight - (narrow ? 150 : 56)) / VISIBLE_ROWS;
-    const byW = (window.innerWidth - side) / COLS;
+    // Phones get a header row (hold · stats · next) above a full-width board; desktop has side panels.
+    const narrow = window.innerWidth <= 640;
+    const byH = (window.innerHeight - (narrow ? 126 : 56)) / VISIBLE_ROWS;
+    const byW = (window.innerWidth - (narrow ? 16 : 380)) / COLS;
     this.cell = Math.max(14, Math.min(44, Math.floor(Math.min(byH, byW))));
     const c = this.cell;
     this.ctx = setupCanvas(this.board, c * COLS, c * VISIBLE_ROWS, this.dpr);
-    const mini = Math.round(c * (narrow ? 0.5 : 0.7));
+    const mini = narrow ? 13 : Math.round(c * 0.7);
     this.holdCtx = setupCanvas(this.holdCanvas, mini * 4.5, mini * 3, this.dpr);
-    this.nextCount = narrow ? 3 : 5;
-    this.nextCtx = setupCanvas(this.nextCanvas, mini * 4.5, mini * 3 * this.nextCount, this.dpr);
+    this.nextCount = narrow ? 2 : 5;
+    this.nextHorizontal = narrow;
+    this.nextCtx = narrow
+      ? setupCanvas(this.nextCanvas, mini * 4.5 * this.nextCount, mini * 3, this.dpr)
+      : setupCanvas(this.nextCanvas, mini * 4.5, mini * 3 * this.nextCount, this.dpr);
     document.documentElement.style.setProperty('--cell', `${c}px`);
   }
 
@@ -107,8 +111,8 @@ export class Renderer {
     fx.draw(ctx, c);
     ctx.restore();
 
-    this.drawMini(this.holdCtx, game.hold ? [game.hold] : [], !game.canHold);
-    this.drawMini(this.nextCtx, game.queue(this.nextCount), false);
+    this.drawMini(this.holdCtx, game.hold ? [game.hold] : [], !game.canHold, false);
+    this.drawMini(this.nextCtx, game.queue(this.nextCount), false, this.nextHorizontal);
   }
 
   private drawDanger(game: Game, ctx: CanvasRenderingContext2D, W: number, c: number) {
@@ -171,13 +175,15 @@ export class Renderer {
     ctx.restore();
   }
 
-  private drawMini(ctx: CanvasRenderingContext2D, pieces: PieceType[], dim: boolean) {
+  /** Hold box / next queue. Pieces stack vertically, or side by side in the phone header. */
+  private drawMini(ctx: CanvasRenderingContext2D, pieces: PieceType[], dim: boolean, horizontal: boolean) {
     const canvas = ctx.canvas;
     const w = canvas.width / this.dpr;
     const h = canvas.height / this.dpr;
     ctx.clearRect(0, 0, w, h);
-    const m = w / 4.5;
-    const slot = m * 3;
+    const slotW = horizontal ? w / Math.max(1, pieces.length) : w;
+    const slotH = horizontal ? h : (w / 4.5) * 3;
+    const m = slotW / 4.5;
     pieces.forEach((type, i) => {
       const cells = SHAPES[type][0];
       const xs = cells.map(([x]) => x);
@@ -185,8 +191,10 @@ export class Renderer {
       const pw = Math.max(...xs) - Math.min(...xs) + 1;
       const ph = Math.max(...ys) - Math.min(...ys) + 1;
       const s = i === 0 ? m : m * 0.85;
-      const ox = (w - pw * s) / 2 - Math.min(...xs) * s;
-      const oy = i * slot + (slot - ph * s) / 2 - Math.min(...ys) * s;
+      const sx = horizontal ? i * slotW : 0;
+      const sy = horizontal ? 0 : i * slotH;
+      const ox = sx + (slotW - pw * s) / 2 - Math.min(...xs) * s;
+      const oy = sy + (slotH - ph * s) / 2 - Math.min(...ys) * s;
       ctx.globalAlpha = dim ? 0.35 : 1;
       const color = PIECE_COLOR[type];
       for (const [x, y] of cells) ctx.drawImage(this.sprites.get(color, s), ox + x * s, oy + y * s, s, s);

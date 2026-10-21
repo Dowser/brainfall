@@ -56,6 +56,7 @@
         </section>
         <p class="hint" data-i18n="burnHint"></p>
         <div class="sound-chips">
+          <button class="chip" id="chip-pause" title="Esc" aria-label="Paus">❚❚</button>
           <button class="chip" id="chip-music" title="M">♪</button>
           <button class="chip" id="chip-sfx" title="S">🔊</button>
         </div>
@@ -68,14 +69,21 @@
       </h1>
       <p class="subtitle" data-i18n="subtitle"></p>
       <div id="challenge" class="challenge" hidden></div>
-      <button id="btn-play" class="btn primary"><span data-i18n="play"></span> <kbd>Enter</kbd></button>
+      <button id="btn-play" class="btn primary"><span data-i18n="play"></span> <kbd class="kbd-only">Enter</kbd></button>
       <div class="row">
         <button id="btn-scores" class="btn" data-i18n="highscores"></button>
         <button id="btn-settings" class="btn" data-i18n="settings"></button>
       </div>
       <div class="langs" id="langs"></div>
-      <p class="howto" data-i18n="howTo"></p>
-      <p class="keys-help"><span data-i18n="answerKeys"></span> · <span data-i18n="muteKeys"></span></p>
+      <p class="howto kbd-only" data-i18n="howTo"></p>
+      <p class="keys-help kbd-only"><span data-i18n="answerKeys"></span> · <span data-i18n="muteKeys"></span></p>
+      <ul class="howto touch-only touch-help">
+        <li><b>⇆</b> <span data-i18n="touchMove"></span></li>
+        <li><b>⟳</b> <span data-i18n="touchRotate"></span></li>
+        <li><b>⇣</b> <span data-i18n="touchDrop"></span></li>
+        <li><b>⇡</b> <span data-i18n="touchHold"></span></li>
+        <li><b>?</b> <span data-i18n="touchAnswer"></span></li>
+      </ul>
     </div>
 
     <div id="pause" class="screen modal" hidden>
@@ -83,6 +91,7 @@
         <h2 data-i18n="paused"></h2>
         <button class="btn primary" data-act="resume" data-i18n="resume"></button>
         <button class="btn" data-act="restart" data-i18n="restart"></button>
+        <button class="btn" data-act="settings" data-i18n="settings"></button>
         <button class="btn" data-act="quit" data-i18n="quit"></button>
       </div>
     </div>
@@ -94,7 +103,7 @@
         <div class="badge" id="over-best" data-i18n="newBest" hidden></div>
         <div class="challenge" id="over-challenge" hidden></div>
         <dl class="over-stats" id="over-stats"></dl>
-        <button class="btn primary" data-act="again"><span data-i18n="playAgain"></span> <kbd>Enter</kbd></button>
+        <button class="btn primary" data-act="again"><span data-i18n="playAgain"></span> <kbd class="kbd-only">Enter</kbd></button>
         <button class="btn share" data-act="share" data-i18n="share"></button>
         <button class="btn" data-act="quit" data-i18n="quit"></button>
       </div>
@@ -119,10 +128,10 @@
           <label><input type="checkbox" id="set-sfx" /> <span data-i18n="sfx"></span></label>
           <input type="range" id="vol-sfx" min="0" max="1" step="0.05" />
         </div>
-        <h3 data-i18n="controls"></h3>
-        <div class="keymap" id="keymap"></div>
+        <h3 class="kbd-only" data-i18n="controls"></h3>
+        <div class="keymap kbd-only" id="keymap"></div>
         <div class="row">
-          <button class="btn" data-act="reset-keys" data-i18n="resetKeys"></button>
+          <button class="btn kbd-only" data-act="reset-keys" data-i18n="resetKeys"></button>
           <button class="btn primary" data-act="close" data-i18n="close"></button>
         </div>
       </div>

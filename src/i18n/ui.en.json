@@ -55,5 +55,10 @@
   "action.hold": "Hold piece",
   "action.pause": "Pause",
   "answerKeys": "Answer: ← / → or 1 / 2",
-  "muteKeys": "M: music · S: sound effects"
+  "muteKeys": "M: music · S: sound effects",
+  "touchMove": "Drag sideways to move",
+  "touchRotate": "Tap to rotate (left/right half)",
+  "touchDrop": "Drag down to lower, flick down to drop",
+  "touchHold": "Flick up to hold the piece",
+  "touchAnswer": "Tap an answer when a question appears"
 }

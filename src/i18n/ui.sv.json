@@ -55,5 +55,10 @@
   "action.hold": "Håll bit",
   "action.pause": "Paus",
   "answerKeys": "Svara: ← / → eller 1 / 2",
-  "muteKeys": "M: musik · S: ljudeffekter"
+  "muteKeys": "M: musik · S: ljudeffekter",
+  "touchMove": "Dra åt sidan för att flytta",
+  "touchRotate": "Tryck för att rotera (vänster/höger halva)",
+  "touchDrop": "Dra ner för att sänka, svep snabbt för att släppa",
+  "touchHold": "Svep uppåt för att hålla biten",
+  "touchAnswer": "Tryck på ett svar när frågan dyker upp"
 }
