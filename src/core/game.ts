@@ -254,7 +254,7 @@ export class Game {
     this.pendingRows = rows;
     const asked = this.nextQuestion();
     if (!asked) {
-      // No questions available: behave like classic Tetris.
+      // No questions available: behave like a classic block-stacking game.
       this.quiz = null;
       this.applyCorrect(1);
       return this.finishTurn();

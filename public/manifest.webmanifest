@@ -1,6 +1,6 @@
 {
-  "name": "TTetris – Tetris med frågesport",
-  "short_name": "TTetris",
+  "name": "Brainfall – fallande block, snabba frågor",
+  "short_name": "Brainfall",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

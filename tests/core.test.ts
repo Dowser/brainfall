@@ -148,7 +148,7 @@ describe('quiz flow', () => {
     expect(g.streak).toBe(0);
   });
 
-  it('without questions it plays like classic Tetris', () => {
+  it('without questions it plays like a classic block game', () => {
     const g = gameReadyForLine(() => null);
     g.hardDrop();
     expect(g.phase).toBe('playing');

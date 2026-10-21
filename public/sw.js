@@ -1,6 +1,6 @@
 // Offline support: network-first for the page and questions (so updates land fast),
 // cache-first for hashed build assets (they never change).
-const CACHE = 'ttetris-v1';
+const CACHE = 'brainfall-v1';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => {

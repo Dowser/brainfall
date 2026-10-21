@@ -1,6 +1,6 @@
-# TTetris – Tetris med frågesport
+# Brainfall
 
-Tetris med en twist: varje gång du fyller en rad dyker en snabb fråga med två svarsalternativ upp.
+**Fallande block, snabba frågor.** Ett klassiskt blockspel med en twist: varje gång du fyller en rad dyker en snabb fråga med två svarsalternativ upp.
 **Rätt svar** → raden rensas. **Fel svar** (eller tiden tar slut) → raden blir *låst* och stannar kvar.
 **3 rätt i rad** bränner bort den understa låsta raden.
 
@@ -59,7 +59,7 @@ Fler frågor i ett befintligt språk läggs bara till i JSON-filen. Spelet spara
 1. Pusha repot till GitHub.
 2. Gå till Cloudflare dashboard → *Workers & Pages* → *Create* → *Pages* → *Connect to Git* och välj repot.
 3. Build command: `npm run build`. Build output directory: `dist`.
-4. Under *Environment variables*: sätt `VITE_SITE_URL` till din publika URL med avslutande `/`, t.ex. `https://ttetris.pages.dev/`.
+4. Under *Environment variables*: sätt `VITE_SITE_URL` till din publika URL med avslutande `/`, t.ex. `https://brainfall.pages.dev/`.
    Den används för `og:image`, som måste vara en absolut URL för att länkförhandsvisningar ska fungera.
 
 Varje push till `main` deployas automatiskt, och andra brancher får egna preview-URL:er.
@@ -67,7 +67,7 @@ Varje push till `main` deployas automatiskt, och andra brancher får egna previe
 **Utan GitHub:**
 ```bash
 npm run build
-npx wrangler pages deploy dist --project-name ttetris
+npx wrangler pages deploy dist --project-name brainfall
 ```
 
 `public/_headers` ger hashade assets en cache-tid på ett år. `public/sw.js` gör att spelet fungerar offline och kan installeras som app (PWA).

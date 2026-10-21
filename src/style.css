@@ -333,7 +333,9 @@ kbd {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* `safe` keeps the top (logo) reachable when the menu is taller than the window. */
+  justify-content: safe center;
+  overflow-y: auto;
   gap: 16px;
   padding: 24px 16px;
   text-align: center;
@@ -381,7 +383,7 @@ kbd {
 
 .logo {
   margin: 0;
-  font: 900 clamp(48px, 13vw, 110px) var(--display);
+  font: 900 clamp(34px, 10vw, 104px) var(--display);
   letter-spacing: 0.04em;
   line-height: 1;
   display: flex;

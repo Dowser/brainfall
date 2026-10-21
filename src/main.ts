@@ -55,7 +55,7 @@ async function loadBank(code: string): Promise<Question[]> {
     banks.set(code, data.questions);
     return data.questions;
   } catch {
-    return []; // offline without cache → classic Tetris
+    return []; // offline without cache → no questions, plain stacking
   }
 }
 
@@ -329,8 +329,8 @@ function handleEvent(g: Game, e: GameEvent, now: number) {
     case 'clear':
       fx.rowBurst(e.rows, e.cells, HIDDEN_ROWS);
       if (e.rows.length >= 4) {
-        audio.play('tetris');
-        fx.text(t('tetris'), '#ffe14d', 1.6, 9);
+        audio.play('quad');
+        fx.text(t('quad'), '#ffe14d', 1.6, 9);
         fx.shake(12, 260);
       } else audio.play('clear');
       break;

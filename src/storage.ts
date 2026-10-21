@@ -28,7 +28,7 @@ export interface HighScore {
   seed: string;
 }
 
-const PREFIX = 'ttetris.';
+const PREFIX = 'brainfall.';
 
 // Storage can throw (private mode, blocked site data) – the game must work without it.
 function read<T>(key: string, fallback: T): T {

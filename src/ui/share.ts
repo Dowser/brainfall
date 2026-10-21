@@ -43,7 +43,7 @@ export async function shareScore(seed: string, score: number) {
   const text = t('shareText', { score: formatNumber(score) });
   if (navigator.share) {
     try {
-      await navigator.share({ title: 'TTetris', text, url });
+      await navigator.share({ title: 'Brainfall', text, url });
       return;
     } catch (e) {
       if ((e as DOMException).name === 'AbortError') return;
