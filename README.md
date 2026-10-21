@@ -1,6 +1,8 @@
 # Brainfall
 
-**Fallande block, snabba frågor.** Ett klassiskt blockspel med en twist: varje gång du fyller en rad dyker en snabb fråga med två svarsalternativ upp.
+**Fallande block, snabba frågor.** Spela på **https://brainfall.buzzlogg.app**.
+
+Ett klassiskt blockspel med en twist: varje gång du fyller en rad dyker en snabb fråga med två svarsalternativ upp.
 **Rätt svar** → raden rensas. **Fel svar** (eller tiden tar slut) → raden blir *låst* och stannar kvar.
 **3 rätt i rad** bränner bort den understa låsta raden.
 
@@ -61,8 +63,8 @@ Gratisplanen räcker gott, eftersom anrop till statiska assets inte räknas mot 
 **Via GitHub (Workers Builds):**
 1. Cloudflare dashboard → *Workers & Pages* → *Create* → *Import a repository* → välj `Dowser/brainfall`.
 2. Build command: `npm run build`. Deploy command: `npx wrangler deploy`.
-3. Under *Settings → Build → Variables*: sätt `VITE_SITE_URL` till den publika adressen med avslutande `/`, t.ex. `https://brainfall.<ditt-konto>.workers.dev/`.
-   Den används för `og:image`, som måste vara en absolut URL för att länkförhandsvisningar ska fungera.
+3. Den publika adressen är **https://brainfall.buzzlogg.app/** (custom domain på Workern). Den står som `VITE_SITE_URL` i `.env` och används för `og:image`, som måste vara en absolut URL för att länkförhandsvisningar ska fungera.
+   Byter du domän uppdaterar du `.env`, eller sätter variabeln under *Settings → Build → Variables*.
 
 Varje push till `main` deployas automatiskt.
 
