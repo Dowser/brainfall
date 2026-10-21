@@ -53,21 +53,23 @@ Frågorna slumpas däremot fritt.
 
 Fler frågor i ett befintligt språk läggs bara till i JSON-filen. Spelet sparar vilka frågor du sett (per språk, i localStorage), så du får inga upprepningar förrän banken är slut.
 
-## Deploy till Cloudflare Pages (gratis)
+## Deploy till Cloudflare (gratis)
 
-**Via GitHub (rekommenderas):**
-1. Pusha repot till GitHub.
-2. Gå till Cloudflare dashboard → *Workers & Pages* → *Create* → *Pages* → *Connect to Git* och välj repot.
-3. Build command: `npm run build`. Build output directory: `dist`.
-4. Under *Environment variables*: sätt `VITE_SITE_URL` till din publika URL med avslutande `/`, t.ex. `https://brainfall.pages.dev/`.
+Spelet deployas som en Cloudflare Worker med enbart statiska assets, utan någon Worker-kod. Det styrs av `wrangler.jsonc`.
+Gratisplanen räcker gott, eftersom anrop till statiska assets inte räknas mot Workers-kvoten.
+
+**Via GitHub (Workers Builds):**
+1. Cloudflare dashboard → *Workers & Pages* → *Create* → *Import a repository* → välj `Dowser/brainfall`.
+2. Build command: `npm run build`. Deploy command: `npx wrangler deploy`.
+3. Under *Settings → Build → Variables*: sätt `VITE_SITE_URL` till den publika adressen med avslutande `/`, t.ex. `https://brainfall.<ditt-konto>.workers.dev/`.
    Den används för `og:image`, som måste vara en absolut URL för att länkförhandsvisningar ska fungera.
 
-Varje push till `main` deployas automatiskt, och andra brancher får egna preview-URL:er.
+Varje push till `main` deployas automatiskt.
 
-**Utan GitHub:**
+**Från egen dator:**
 ```bash
 npm run build
-npx wrangler pages deploy dist --project-name brainfall
+npx wrangler deploy
 ```
 
 `public/_headers` ger hashade assets en cache-tid på ett år. `public/sw.js` gör att spelet fungerar offline och kan installeras som app (PWA).
